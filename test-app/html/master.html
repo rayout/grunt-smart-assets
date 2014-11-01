@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta content="IE=Edge,chrome=1" http-equiv="X-UA-Compatible" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+        <title>Test file</title>
+
+        <link rel="stylesheet" type="text/css" href="/app/sass/starting.sass">
+
+        <script type="text/javascript" src="/app/coffee/app.coffee"></script>
+
+    </head>
+
+    <body>
+		 <!-- Navbar -->
+		<div class="navbar navbar-fixed-top navbar-inverse hb-nav" role="navigation">
+			<div class="container">
+
+                <img src="/app/img/favicon.ico" />
+
+				<a data-toggle="collapse" data-target=".nav-collapse" class="btn btn-navbar">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</a>
+				<a class="brand" href="{{{ URL::to('') }}}">url</a>
+				<div class="container nav-collapse">
+					<ul class="nav">
+						<li><a href="{{{ URL::to('/url/1') }}}">url</a></li>
+					</ul>
+				</div>
+            </div>
+        </div>
+
+
+        <!-- Container -->
+        <div class="container">
+
+            <!-- Content -->
+            @yield('content')
+
+        </div>
+    </body>
+</html>

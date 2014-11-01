@@ -1,10 +1,10 @@
 #
 # * grunt-smart-assets
-# * 
+# *
 # *
 # * Copyright (c) 2014 Shapovalov Alexandr
 # * Licensed under the MIT license.
-# 
+#
 "use strict"
 
 module.exports = (grunt) ->
@@ -18,15 +18,36 @@ module.exports = (grunt) ->
 		grunt.config.set(task, default_config);
 		grunt.task.run(task + ':smart_assets');
 
+	patterns = [
+		[/<script.+src=['"]([^"']+)["']/gim]
+		[/<link[^\>]+href=['"]([^"']+)["']/gim]
+		[/<img[^\>]*[^\>\S]+src=['"]([^"']+)["']/gim]
+		[/<image[^\>]*[^\>\S]+xlink:href=['"]([^"']+)["']/gim]
+		[/<image[^\>]*[^\>\S]+src=['"]([^"']+)["']/gim]
+		[/<(?:img|source)[^\>]*[^\>\S]+srcset=['"]([^"'\s]+)(?:\s\d[mx])["']/gim]
+		[/<source[^\>]+src=['"]([^"']+)["']/gim]
+		[/<a[^\>]+href=['"]([^"']+)["']/gim]
+		[/<input[^\>]+src=['"]([^"']+)["']/gim]
+		[/data-(?!main).[^=]+=['"]([^'"]+)['"]/gim]
+		[/<meta[^\>]+content=['"]([^"']+)["']/gim]
+		[/<object[^\>]+data=['"]([^"']+)["']/gim]
+	]
 	# Please see the Grunt documentation for more information regarding task
 	# creation: http://gruntjs.com/creating-tasks
 	grunt.registerMultiTask "smart_assets", ->
 
 		# Merge task-specific and/or target-specific options with these defaults.
 		options = @options(
-			cwd: 'test-app/app'
-			dest: 'test-app/dist'
-			cleanDist: true
+			files:
+				cwd: 'test-app/app'
+				dest: 'test-app/dist'
+				cleanDist: true
+			html:
+				cwd: 'test-app/html'
+				dest: 'test-app/html-dest'
+				src: '*.html'
+				assetDir: 'test-app'
+
 
 			#register extensions
 			ext:
@@ -35,7 +56,7 @@ module.exports = (grunt) ->
 					to: '.js'
 				sass:
 					from: ['.sass', '.scss']
-					to: ['.css']
+					to: '.css'
 			#custom options for tasks
 			tasks:
 				coffee: {
@@ -45,17 +66,17 @@ module.exports = (grunt) ->
 				}
 		)
 
-		if !options.cwd? or !options.dest? or !options.ext?
+		if !options.files.cwd? or !options.files.dest? or !options.ext? or !options.html?
 			grunt.log.warn "Your config is wrong!"
 			return false
 
 		#clean dist before other tasks run
 		if options.cleanDist
-			run_task 'clean', options.dest
+			run_task 'clean', options.files.dest
 
-		grunt.registerTask "smart_assets_run", ->
+		grunt.registerTask "smart_assets_files", ->
 			files = {}
-			grunt.file.expand({cwd: options.cwd, filter: 'isFile'}, '**/*').forEach (file)->
+			grunt.file.expand({cwd: options.files.cwd, filter: 'isFile'}, '**/*').forEach (file)->
 
 				ext = path.extname file;
 				find = -1;
@@ -74,14 +95,41 @@ module.exports = (grunt) ->
 
 				src = {};
 				_.forEach val, (file) ->
-					src[options.dest + '/' + file + (if options.ext[task]?.to? then options.ext[task].to else '')] = options.cwd + '/' + file
+					src[path.join(options.files.dest , file) + (if options.ext[task]?.to? then options.ext[task].to else '')] = path.join( options.files.cwd , file)
 
 				options.tasks[task]['files'] = src
 				run_task task, options.tasks[task]
 
+		grunt.registerTask "smart_assets_html", ->
+			grunt.file.expand({cwd: options.html.cwd, filter: 'isFile'}, options.html.src).forEach (file_name)->
+				content = grunt.file.read path.join(options.html.cwd, file_name)
+				patterns.forEach (pattern) ->
+					match =  content.match pattern[0]
+					if match != null
+						file = RegExp.$1
+						file_ext = path.extname(file) #берем расширение файла
+						#ищем результирующее
+						result_ext = if options.ext[file_ext.split('.').pop()]?.to? then options.ext[file_ext.split('.').pop()].to else ''
+						result_file = file + result_ext
+
+						re = new RegExp(options.html.assetDir, 'g', 'i')
+						if !re.test(result_file)
+							result_file_path = path.join(options.html.assetDir, result_file).replace(options.files.cwd, options.files.dest)
+							result_file = path.join(options.html.assetDir, result_file).replace(options.files.cwd, options.files.dest).replace(options.html.assetDir, '')
+						else
+							result_file_path = result_file
+							result_file = result_file.replace(options.files.cwd, options.files.dest)
+
+						if grunt.file.exists(result_file_path)
+							content = content.replace pattern[0], (s1, s2)->
+								return s1.replace s2, result_file
+
+				#console.log path.join(options.html.dest, file_name)
+				grunt.file.write path.join(options.html.dest, file_name), content
+
+		grunt.task.run(['smart_assets_files', 'smart_assets_html']);
 
 
-		grunt.task.run(['smart_assets_run']);
 
 		# Iterate over all specified file groups.
 #		@files.forEach (file) ->

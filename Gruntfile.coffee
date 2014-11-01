@@ -1,10 +1,10 @@
 #
 # * grunt-smart-assets
-# * 
+# *
 # *
 # * Copyright (c) 2014 Shapovalov Alexandr
 # * Licensed under the MIT license.
-# 
+#
 "use strict"
 module.exports = (grunt) ->
 
@@ -33,9 +33,16 @@ module.exports = (grunt) ->
 		smart_assets:
 			compile:
 				options:
-					cwd: 'test-app/app'
-					dest: 'test-app/dist'
-					cleanDist: true,
+					files:
+						cwd: 'test-app/app'
+						dest: 'test-app/dist'
+						cleanDist: true
+					html:
+						cwd: 'test-app/html'
+						dest: 'test-app/html-dest'
+						src: '*.html'
+						assetDir: 'test-app'
+
 
 	# Unit tests.
 		nodeunit:
