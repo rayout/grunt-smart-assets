@@ -28,18 +28,18 @@ grunt.initConfig({
     compile:{
       options: {
         files: {
-	  cwd: 'test-app/app',
-	  dest: 'test-app/dist',
-	  cleanDist: true
+            cwd: 'test-app/app',
+	        dest: 'test-app/dist',
+	        cleanDist: true
         },
         html:{
-         cwd: 'test-app/html',
-         dest: 'test-app/html-dest',
-         src: '*.html',
-         assetDir: 'test-app'
+            cwd: 'test-app/html',
+            dest: 'test-app/html-dest',
+            src: '*.html',
+            assetDir: 'test-app'
         }
-     }
-   }
+      }
+    }
 })
 ```
 
