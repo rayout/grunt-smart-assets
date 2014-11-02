@@ -87,7 +87,7 @@ module.exports = (grunt) ->
 					files[find] = new Array() unless _.isArray files[find]
 					files[find].push file
 				else
-					files['copy'] = new Array() unless _.isArray files[find]
+					files['copy'] = new Array() unless _.isArray files['copy']
 					files['copy'].push file
 
 			_.forEach files, (val, task) ->
