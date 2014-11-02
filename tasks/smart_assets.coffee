@@ -29,7 +29,17 @@ module.exports = (grunt) ->
 		[/<a[^\>]+href=['"]([^"']+)["']/gim]
 		[/<input[^\>]+src=['"]([^"']+)["']/gim]
 		[/data-(?!main).[^=]+=['"]([^'"]+)['"]/gim]
-		[/<meta[^\>]+content=['"]([^"']+)["']/gim]
+		[
+			[/data-main\s*=['"]([^"']+)['"]/gim]
+			(m) ->
+				if m.match(/\.js$/)
+					return m
+				else
+					return m + '.js'
+
+			(m) ->
+				return m.replace('.js', '')
+		]
 		[/<object[^\>]+data=['"]([^"']+)["']/gim]
 	]
 	# Please see the Grunt documentation for more information regarding task
@@ -71,7 +81,7 @@ module.exports = (grunt) ->
 			return false
 
 		#clean dist before other tasks run
-		if options.cleanDist
+		if options.files.cleanDist
 			run_task 'clean', options.files.dest
 
 		grunt.registerTask "smart_assets_files", ->
@@ -104,25 +114,30 @@ module.exports = (grunt) ->
 			grunt.file.expand({cwd: options.html.cwd, filter: 'isFile'}, options.html.src).forEach (file_name)->
 				content = grunt.file.read path.join(options.html.cwd, file_name)
 				patterns.forEach (pattern) ->
-					match =  content.match pattern[0]
-					if match != null
-						file = RegExp.$1
-						file_ext = path.extname(file) #берем расширение файла
-						#ищем результирующее
-						result_ext = if options.ext[file_ext.split('.').pop()]?.to? then options.ext[file_ext.split('.').pop()].to else ''
-						result_file = file + result_ext
 
-						re = new RegExp(options.html.assetDir, 'g', 'i')
-						if !re.test(result_file)
+					patrn = if pattern[0]?[0]? then  pattern[0][0] else pattern[0]
+					match =  content.match patrn
+
+					if match != null
+						match.forEach (result) ->
+							result.match pattern[0]
+
+							file = RegExp.$1
+							file_ext = path.extname(file) #берем расширение файла
+							#ищем результирующее
+							result_ext = if options.ext[file_ext.split('.').pop()]?.to? then options.ext[file_ext.split('.').pop()].to else ''
+							result_file = file + result_ext
+
+							re = new RegExp(options.html.assetDir, 'gi')
+
+
+							if pattern[1]? then result_file = pattern[1](result_file)
 							result_file_path = path.join(options.html.assetDir, result_file).replace(options.files.cwd, options.files.dest)
 							result_file = path.join(options.html.assetDir, result_file).replace(options.files.cwd, options.files.dest).replace(options.html.assetDir, '')
-						else
-							result_file_path = result_file
-							result_file = result_file.replace(options.files.cwd, options.files.dest)
 
-						if grunt.file.exists(result_file_path)
-							content = content.replace pattern[0], (s1, s2)->
-								return s1.replace s2, result_file
+							if grunt.file.exists(result_file_path)
+								if pattern[2]? then result_file = pattern[2](result_file)
+								content = content.replace file, result_file
 
 				#console.log path.join(options.html.dest, file_name)
 				grunt.file.write path.join(options.html.dest, file_name), content

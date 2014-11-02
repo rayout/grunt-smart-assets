@@ -40,7 +40,7 @@ module.exports = (grunt) ->
 					html:
 						cwd: 'test-app/html'
 						dest: 'test-app/html-dest'
-						src: '*.html'
+						src: '*.php'
 						assetDir: 'test-app'
 
 
