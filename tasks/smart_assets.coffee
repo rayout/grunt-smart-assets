@@ -105,7 +105,13 @@ module.exports = (grunt) ->
 
 				src = {};
 				_.forEach val, (file) ->
-					src[path.join(options.files.dest , file) + (if options.ext[task]?.to? then options.ext[task].to else '')] = path.join( options.files.cwd , file)
+					ext = path.extname(file)
+					result_ext = (if options.ext[task]?.to? then options.ext[task].to else '')
+					if result_ext != ''
+						result_path = path.join(options.files.dest , file).replace(ext, result_ext)
+					else
+						result_path = path.join(options.files.dest , file)
+					src[result_path] = path.join( options.files.cwd , file)
 
 				options.tasks[task]['files'] = src
 				run_task task, options.tasks[task]
@@ -126,10 +132,10 @@ module.exports = (grunt) ->
 							file_ext = path.extname(file) #берем расширение файла
 							#ищем результирующее
 							result_ext = if options.ext[file_ext.split('.').pop()]?.to? then options.ext[file_ext.split('.').pop()].to else ''
-							result_file = file + result_ext
-
-							re = new RegExp(options.html.assetDir, 'gi')
-
+							if result_ext != ''
+								result_file =file.replace file_ext, result_ext
+							else
+								result_file =file
 
 							if pattern[1]? then result_file = pattern[1](result_file)
 							result_file_path = path.join(options.html.assetDir, result_file).replace(options.files.cwd, options.files.dest)
