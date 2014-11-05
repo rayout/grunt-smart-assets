@@ -36,12 +36,23 @@ module.exports = (grunt) ->
 					files:
 						cwd: 'test-app/app'
 						dest: 'test-app/dist'
-						cleanDist: true
+						cleanDest: true
 					html:
 						cwd: 'test-app/html'
 						dest: 'test-app/html-dest'
-						src: '*.php'
+						src: '*.html'
 						assetDir: 'test-app'
+					tasks:
+						coffee:
+							from: ['.coffee']
+							to: '.js'
+							options:
+								sourceMap: true,
+								bare: true
+						sass:
+							from: ['.sass', '.scss']
+							to: '.css'
+
 
 
 	# Unit tests.

@@ -42,55 +42,40 @@ module.exports = (grunt) ->
 		]
 		[/<object[^\>]+data=['"]([^"']+)["']/gim]
 	]
+
+	#standart task need
+	grunt.task.loadNpmTasks('grunt-contrib-copy')
+
 	# Please see the Grunt documentation for more information regarding task
 	# creation: http://gruntjs.com/creating-tasks
 	grunt.registerMultiTask "smart_assets", ->
 
 		# Merge task-specific and/or target-specific options with these defaults.
-		options = @options(
+		options = @options()
+		defaults_options =
 			files:
-				cwd: 'test-app/app'
-				dest: 'test-app/dist'
-				cleanDist: true
+				src: '**/*'
 			html:
-				cwd: 'test-app/html'
-				dest: 'test-app/html-dest'
-				src: '*.html'
-				assetDir: 'test-app'
+				src: '**/*'
 
+		options = _.merge(defaults_options, options)
 
-			#register extensions
-			ext:
-				coffee:
-					from: ['.coffee']
-					to: '.js'
-				sass:
-					from: ['.sass', '.scss']
-					to: '.css'
-			#custom options for tasks
-			tasks:
-				coffee: {
-					options:
-						sourceMap: true,
-						bare: true
-				}
-		)
+		if !options.files.cwd? or !options.files.dest?
+			grunt.fail.fatal "Your not configure files.cwd or files.dest!"
 
-		if !options.files.cwd? or !options.files.dest? or !options.ext? or !options.html?
-			grunt.log.warn "Your config is wrong!"
-			return false
 
 		#clean dist before other tasks run
-		if options.files.cleanDist
+		if options.files.cleanDest
+			grunt.task.loadNpmTasks('grunt-contrib-clean')
 			run_task 'clean', options.files.dest
 
 		grunt.registerTask "smart_assets_files", ->
 			files = {}
-			grunt.file.expand({cwd: options.files.cwd, filter: 'isFile'}, '**/*').forEach (file)->
+			grunt.file.expand({cwd: options.files.cwd, filter: 'isFile'}, options.files.src).forEach (file)->
 
 				ext = path.extname file;
 				find = -1;
-				_.forEach options.ext, (values,key)->
+				_.forEach options.tasks, (values,key)->
 					find = key unless _.indexOf(values.from, ext) is -1
 
 				unless find is -1
@@ -101,52 +86,77 @@ module.exports = (grunt) ->
 					files['copy'].push file
 
 			_.forEach files, (val, task) ->
-				options.tasks[task] = {} unless _.isObject options.tasks[task]
+				src = {}
+				task_options = {}
 
-				src = {};
+				if options.tasks[task]?['options']? and _.isObject options.tasks[task]['options']
+					task_options.options = options.tasks[task]['options']
+
 				_.forEach val, (file) ->
 					ext = path.extname(file)
-					result_ext = (if options.ext[task]?.to? then options.ext[task].to else '')
+					result_ext = (if options.tasks[task]?.to? then options.tasks[task].to else '')
 					if result_ext != ''
 						result_path = path.join(options.files.dest , file).replace(ext, result_ext)
 					else
 						result_path = path.join(options.files.dest , file)
 					src[result_path] = path.join( options.files.cwd , file)
 
-				options.tasks[task]['files'] = src
-				run_task task, options.tasks[task]
+				task_options['files'] = src
+				run_task task, task_options
 
-		grunt.registerTask "smart_assets_html", ->
-			grunt.file.expand({cwd: options.html.cwd, filter: 'isFile'}, options.html.src).forEach (file_name)->
-				content = grunt.file.read path.join(options.html.cwd, file_name)
-				patterns.forEach (pattern) ->
+		if _.isObject options.html
 
-					patrn = if pattern[0]?[0]? then  pattern[0][0] else pattern[0]
-					match =  content.match patrn
+			if !options.html.cwd? or !options.html.dest?
+				grunt.fail.fatal "Your not configure html.cwd or html.dest!"
 
-					if match != null
-						match.forEach (result) ->
-							result.match pattern[0]
+			grunt.registerTask "smart_assets_html", ->
 
-							file = RegExp.$1
-							file_ext = path.extname(file) #берем расширение файла
-							#ищем результирующее
-							result_ext = if options.ext[file_ext.split('.').pop()]?.to? then options.ext[file_ext.split('.').pop()].to else ''
-							if result_ext != ''
-								result_file =file.replace file_ext, result_ext
-							else
-								result_file =file
+				msg_ok 		= [] unless _.isArray(msg_ok)
+				msg_warn 	= [] unless _.isArray(msg_warn)
 
-							if pattern[1]? then result_file = pattern[1](result_file)
-							result_file_path = path.join(options.html.assetDir, result_file).replace(options.files.cwd, options.files.dest)
-							result_file = path.join(options.html.assetDir, result_file).replace(options.files.cwd, options.files.dest).replace(options.html.assetDir, '')
+				grunt.file.expand({cwd: options.html.cwd, filter: 'isFile'}, options.html.src).forEach (file_name)->
+					content = grunt.file.read path.join(options.html.cwd, file_name)
 
-							if grunt.file.exists(result_file_path)
-								if pattern[2]? then result_file = pattern[2](result_file)
-								content = content.replace file, result_file
+					patterns.forEach (pattern) ->
 
-				#console.log path.join(options.html.dest, file_name)
-				grunt.file.write path.join(options.html.dest, file_name), content
+						patrn = if pattern[0]?[0]? then  pattern[0][0] else pattern[0]
+						match =  content.match patrn
+
+						if match != null
+							match.forEach (result) ->
+								result.match pattern[0]
+
+								file = RegExp.$1
+								file_ext = path.extname(file) #берем расширение файла
+								#ищем результирующее
+								result_ext = if options.tasks[file_ext.split('.').pop()]?.to? then options.tasks[file_ext.split('.').pop()].to else ''
+								if result_ext != ''
+									result_file =file.replace file_ext, result_ext
+								else
+									result_file =file
+
+								if pattern[1]? then result_file = pattern[1](result_file)
+								console.log result_file
+								result_file_path = path.join(options.html.assetDir, result_file).replace(options.files.cwd, options.files.dest)
+								result_file = path.join(options.html.assetDir, result_file).replace(options.files.cwd, options.files.dest).replace(options.html.assetDir, '')
+
+								if grunt.file.exists(result_file_path)
+									if pattern[2]? then result_file = pattern[2](result_file)
+									content = content.replace file, result_file
+									msg_ok.push('Replace ' + file + ' to ' + result_file)
+
+								else
+									msg_warn.push('Not replaced in html (ignore it if all ok) - "' + file + '"')
+
+					grunt.log.subhead('Changed path in html:')
+					msg_ok.forEach (msg) ->
+						grunt.log.ok(msg)
+
+					grunt.log.subhead('Error? No! Just warning...:')
+					msg_warn.forEach (msg) ->
+						grunt.log.warn(msg)
+
+					grunt.file.write path.join(options.html.dest, file_name), content
 
 		grunt.task.run(['smart_assets_files', 'smart_assets_html']);
 
