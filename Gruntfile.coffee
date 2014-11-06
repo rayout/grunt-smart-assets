@@ -36,14 +36,14 @@ module.exports = (grunt) ->
 			compile:
 				options:
 					files:
-						cwd: 'test-app/app'
-						dest: 'test-app/dist'
+						cwd: 'test/test-app/app'
+						dest: 'test/test-app/dist'
 						cleanDest: true
 					html:
-						cwd: 'test-app/html'
-						dest: 'test-app/html-dest'
+						cwd: 'test/test-app/html'
+						dest: 'test/test-app/html-dest'
 						src: '*.html'
-						assetDir: 'test-app'
+						assetDir: 'test/test-app'
 						rev: true
 					tasks:
 						coffee:
@@ -58,9 +58,10 @@ module.exports = (grunt) ->
 
 
 
+
 	# Unit tests.
 		nodeunit:
-			tests: ["test/*_test.js"]
+			tests: ["test/*_test.coffee"]
 
 
 	# Actually load this plugin's task(s).
@@ -69,7 +70,6 @@ module.exports = (grunt) ->
 	# Whenever the "test" task is run, first clean the "tmp" dir, then run this
 	# plugin's task(s), then test the result.
 	grunt.registerTask "test", [
-		"clean"
 		"smart_assets"
 		"nodeunit"
 	]

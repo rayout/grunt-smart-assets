@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "StatusInfoController.js",
+  "sourceRoot": "../../../app/ng/controllers/",
+  "sources": [
+    "StatusInfoController.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,YAAA,CAAA;AAAA,MAEA,CAAO,CAAC,MAAM,CAAC,OAAR,CAAP,EAAyB,SAAC,GAAD,GAAA;AACxB,EAAA,GAAG,CAAC,QAAQ,CAAC,UAAb,CAAwB,sBAAxB,EAAgD,CAC/C,QAD+C,EAE/C,OAF+C,EAG/C,WAH+C,EAI/C,cAJ+C,EAK/C,eAL+C,EAM/C,YAN+C,EAO/C,QAP+C,EAQ/C,SAAC,MAAD,EAAS,KAAT,EAAgB,SAAhB,EAA2B,YAA3B,EAAyC,aAAzC,EAAuD,UAAvD,EAAmE,MAAnE,GAAA,CAR+C,CAAhD,CAAA,CADwB;AAAA,CAAzB,CAFA,CAAA"
+}

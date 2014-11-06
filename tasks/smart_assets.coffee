@@ -65,6 +65,7 @@ module.exports = (grunt) ->
 				src: '**/*'
 			html:
 				src: '**/*'
+			tasks : {}
 
 		options = _.merge(defaults_options, options)
 
@@ -83,8 +84,9 @@ module.exports = (grunt) ->
 
 				ext = path.extname file;
 				find = -1;
-				_.forEach options.tasks, (values,key)->
-					find = key unless _.indexOf(values.from, ext) is -1
+				if options.tasks?
+					_.forEach options.tasks, (values,key)->
+						find = key unless _.indexOf(values.from, ext) is -1
 
 				unless find is -1
 					files[find] = new Array() unless _.isArray files[find]

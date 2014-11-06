@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "ErrorController.js",
+  "sourceRoot": "../../../app/ng/controllers/",
+  "sources": [
+    "ErrorController.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,aAAA,CAAA;AAAA,MACA,CAAO,CAAC,KAAD,CAAP,EAAgB,SAAC,GAAD,GAAA;AACf,EAAA,GAAG,CAAC,QAAQ,CAAC,UAAb,CAAwB,iBAAxB,EAA2C;IAC1C,QAD0C,EAE1C,SAAC,MAAD,GAAA;aACC,MAAM,CAAC,KAAP,GAAe,QADhB;IAAA,CAF0C;GAA3C,CAAA,CADe;AAAA,CAAhB,CADA,CAAA"
+}

@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "config.js",
+  "sourceRoot": "../../../app/ng/conf/",
+  "sources": [
+    "config.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,IAAA,MAAA;;AAAA,MAAA,GACC;AAAA,EAAA,OAAA,EAAS,KAAT;AAAA,EACA,IAAA,EACC;AAAA,IAAA,UAAA,EAAY,8BAAZ;AAAA,IACA,IAAA,EAAM,SADN;GAFD;AAAA,EAKA,GAAA,EACC;AAAA,IAAA,UAAA,EAAY,KAAZ;AAAA,IACA,IAAA,EAAM,OADN;GAND;AAAA,EASA,gBAAA,EAAkB,YATlB;CADD,CAAA"
+}

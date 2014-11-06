@@ -1,0 +1,44 @@
+[ng\:cloak], [ng-cloak], .ng-cloak {
+    display: none !important;
+}
+
+.masthead {
+    width: 100%;
+    text-align: center;
+}
+
+#status {
+    width: 200px
+}
+
+.has-error {
+    color: red;
+    padding-top: 10px;
+}
+tr th {
+    text-align: center;
+}
+
+.loader {
+    margin-left: 10px;
+    display: none;
+}
+
+#loading-bar .bar {
+    height: 10px;
+}
+
+.site-wrapper-inner {
+    display: block;
+    margin-top: 100px;
+}
+
+.trackForm {
+    height: 200px;
+}
+
+
+.table-div.ng-hide-add      { animation:1s fadeOut; display: block!important;}
+
+
+.table-div.ng-hide-remove      { animation:1s flipInX ease; display: block!important;}
