@@ -39,6 +39,7 @@ grunt.initConfig({
             dest: 'test-app/html-dest',
             src: '*.html',
             assetDir: 'test-app'
+            rev: true
         }
         //if need transformation
         tasks:
@@ -66,6 +67,12 @@ Type: `Bool`
 Default value: `true`
 
 Clean dist foldr before convert`
+
+#### options.html.rev
+Type: `Bool`
+Default value: `false`
+
+Add ?md5(file) to file name
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).

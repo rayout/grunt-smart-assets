@@ -9,14 +9,22 @@
 
 module.exports = (grunt) ->
 
-	path = require('path')
-	_ = require('lodash');
+	path 	= require('path')
+	crypto 	= require('crypto');
+	_ 		= require('lodash');
 
 	run_task = (task, config) ->
 		default_config = grunt.config.get('task') || {};
 		default_config['smart_assets'] = config
 		grunt.config.set(task, default_config);
 		grunt.task.run(task + ':smart_assets');
+
+	md5 = (filepath) ->
+		hash = crypto.createHash('md5');
+		grunt.log.verbose.write('Hashing ' + filepath + '...');
+		hash.update(grunt.file.read(filepath), 'utf8');
+		return hash.digest('hex').slice(0, 8);
+
 
 	patterns = [
 		[/<script.+src=['"]([^"']+)["']/gim]
@@ -136,25 +144,26 @@ module.exports = (grunt) ->
 									result_file =file
 
 								if pattern[1]? then result_file = pattern[1](result_file)
-								console.log result_file
 								result_file_path = path.join(options.html.assetDir, result_file).replace(options.files.cwd, options.files.dest)
 								result_file = path.join(options.html.assetDir, result_file).replace(options.files.cwd, options.files.dest).replace(options.html.assetDir, '')
 
 								if grunt.file.exists(result_file_path)
 									if pattern[2]? then result_file = pattern[2](result_file)
+									if options.html?.rev? and !pattern[2]? then result_file = [result_file, md5(result_file_path)].join('?')
 									content = content.replace file, result_file
 									msg_ok.push('Replace ' + file + ' to ' + result_file)
 
 								else
 									msg_warn.push('Not replaced in html (ignore it if all ok) - "' + file + '"')
+					if msg_ok.lenght
+						grunt.log.subhead('Changed path in html:')
+						msg_ok.forEach (msg) ->
+							grunt.log.ok(msg)
 
-					grunt.log.subhead('Changed path in html:')
-					msg_ok.forEach (msg) ->
-						grunt.log.ok(msg)
-
-					grunt.log.subhead('Error? No! Just warning...:')
-					msg_warn.forEach (msg) ->
-						grunt.log.warn(msg)
+					if msg_warn.lenght
+						grunt.log.subhead('Error? No! Just warning...:')
+						msg_warn.forEach (msg) ->
+							grunt.log.warn(msg)
 
 					grunt.file.write path.join(options.html.dest, file_name), content
 

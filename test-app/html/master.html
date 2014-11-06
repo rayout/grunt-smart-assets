@@ -1,46 +1,47 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <meta content="IE=Edge,chrome=1" http-equiv="X-UA-Compatible" />
-        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<!doctype html>
+<html lang="ru">
+<head>
+    <base href="/">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>Test smart-assets</title>
 
-        <title>Test file</title>
+    <link rel="stylesheet" type="text/css" href="/app/library/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/app/library/ng/angular-loading-bar.min.css" />
+    <link rel="stylesheet" type="text/css" href="/app/library/css/animate.min.css" />
+    <link rel="stylesheet" type="text/css" href="/app/css/cover.css" />
+    <link rel="stylesheet" type="text/css" href="/app/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="/app/sass/starting.sass">
 
-        <link rel="stylesheet" type="text/css" href="/app/sass/starting.sass">
+</head>
+<body>
+<div class="site-wrapper">
+    <div class="site-wrapper-inner">
 
-        <script type="text/javascript" src="/app/coffee/app.coffee"></script>
-
-    </head>
-
-    <body>
-		 <!-- Navbar -->
-		<div class="navbar navbar-fixed-top navbar-inverse hb-nav" role="navigation">
-			<div class="container">
-
-                <img src="/app/img/favicon.ico" />
-
-				<a data-toggle="collapse" data-target=".nav-collapse" class="btn btn-navbar">
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</a>
-				<a class="brand" href="{{{ URL::to('') }}}">url</a>
-				<div class="container nav-collapse">
-					<ul class="nav">
-						<li><a href="{{{ URL::to('/url/1') }}}">url</a></li>
-					</ul>
-				</div>
-            </div>
-        </div>
-
-
-        <!-- Container -->
-        <div class="container">
-
-            <!-- Content -->
-            @yield('content')
+        <div class="cover-container" ui-view>
 
         </div>
-    </body>
+
+        <div ng-hide="loading" class="container" ui-view="info">
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript" src="/app/library/ng/angular.min.js"></script>
+<script type="text/javascript" src="/app/library/ng/angular-resource.min.js"></script>
+<script type="text/javascript" src="/app/library/ng/angular-route.min.js"></script>
+<script type="text/javascript" src="/app/library/ng/angular-ui-router.min.js"></script>
+
+<script type="text/javascript" src="/app/library/js/jquery.min.js"></script>
+<script type="text/javascript" src="/app/library/bootstrap/js/bootstrap.js"></script>
+
+
+<script type="text/javascript" src="/app/library/js/require.js" data-main="/app/ng/main"></script>
+
+
+</body>
 </html>

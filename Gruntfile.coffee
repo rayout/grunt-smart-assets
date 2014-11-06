@@ -11,6 +11,8 @@ module.exports = (grunt) ->
 	# load all npm grunt tasks
 	require("load-grunt-tasks") grunt
 
+	#require('time-grunt')(grunt)
+
 	# Project configuration.
 	grunt.initConfig
 		jshint:
@@ -42,6 +44,7 @@ module.exports = (grunt) ->
 						dest: 'test-app/html-dest'
 						src: '*.html'
 						assetDir: 'test-app'
+						rev: true
 					tasks:
 						coffee:
 							from: ['.coffee']
