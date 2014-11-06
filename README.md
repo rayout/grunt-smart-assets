@@ -1,6 +1,7 @@
 # grunt-smart-assets
 
->  Convert all files in all directories. Then, change path in html files to new converted files
+>  if necessary, converts all files within the directory, and the remaining copies.. Then, change path in html files to new converted and copied files
+>  Supports all plug-ins which you can specify the SRC and DEST
 
 ## Getting Started
 This plugin requires Grunt.
@@ -30,7 +31,8 @@ grunt.initConfig({
         files: {
             cwd: 'test-app/app',
 	        dest: 'test-app/dist',
-	        cleanDist: true
+	        cleanDist: true,
+	        src: '**/*' //available by default
         },
         html:{
             cwd: 'test-app/html',
@@ -38,6 +40,20 @@ grunt.initConfig({
             src: '*.html',
             assetDir: 'test-app'
         }
+        //if need transformation
+        tasks:
+            coffee: {
+                from: ['.coffee']
+                to: '.js'
+                options: {
+                    sourceMap: true,
+                    bare: true
+                }    
+            }
+            sass: {
+                from: ['.sass', '.scss']
+                to: '.css'
+            }
       }
     }
 })
