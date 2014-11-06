@@ -33,6 +33,27 @@ grunt.initConfig({
 	        dest: 'test-app/dist',
 	        cleanDist: true,
 	        src: '**/*' //available by default
+	        
+	        //if need transformation
+	        streamTasks: {
+                coffee: {
+                    from: ['.coffee'],
+                    to: '.js',
+                    options: {
+                        sourceMap: true,
+                        bare: true
+                    }
+                },
+                sass: {
+                    from: ['.sass', '.scss'],
+                    to: '.css'
+            },
+            afterTasks: {
+                autoprefixer: {
+                    src: ['**/*.css', '!**/library/**'],
+                    options: { map: true }
+                }
+            }
         },
         html:{
             cwd: 'test-app/html',
@@ -41,20 +62,6 @@ grunt.initConfig({
             assetDir: 'test-app'
             rev: true
         }
-        //if need transformation
-        tasks:
-            coffee: {
-                from: ['.coffee']
-                to: '.js'
-                options: {
-                    sourceMap: true,
-                    bare: true
-                }    
-            }
-            sass: {
-                from: ['.sass', '.scss']
-                to: '.css'
-            }
       }
     }
 })
@@ -62,11 +69,21 @@ grunt.initConfig({
 
 ### Options
 
+#### options.files.streamTasks
+Type: `Object`
+
+Tasks to be performed for each file in the specified folder according to the extension
+
+#### options.files.afterTasks
+Type: `Object`
+
+If you need something to do with the files after converting and copying
+
 #### options.files.cleanDist
 Type: `Bool`
 Default value: `true`
 
-Clean dist foldr before convert`
+Clean dist folder before convert`
 
 #### options.html.rev
 Type: `Bool`

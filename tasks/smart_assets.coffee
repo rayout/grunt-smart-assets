@@ -58,14 +58,17 @@ module.exports = (grunt) ->
 	# creation: http://gruntjs.com/creating-tasks
 	grunt.registerMultiTask "smart_assets", ->
 
+		tasks_to_run = []
+
 		# Merge task-specific and/or target-specific options with these defaults.
 		options = @options()
 		defaults_options =
 			files:
 				src: '**/*'
+				streamTasks : {}
 			html:
 				src: '**/*'
-			tasks : {}
+
 
 		options = _.merge(defaults_options, options)
 
@@ -84,8 +87,8 @@ module.exports = (grunt) ->
 
 				ext = path.extname file;
 				find = -1;
-				if options.tasks?
-					_.forEach options.tasks, (values,key)->
+				if options.files.streamTasks?
+					_.forEach options.files.streamTasks, (values,key)->
 						find = key unless _.indexOf(values.from, ext) is -1
 
 				unless find is -1
@@ -99,12 +102,12 @@ module.exports = (grunt) ->
 				src = {}
 				task_options = {}
 
-				if options.tasks[task]?['options']? and _.isObject options.tasks[task]['options']
-					task_options.options = options.tasks[task]['options']
+				if options.files.streamTasks[task]?['options']? and _.isObject options.files.streamTasks[task]['options']
+					task_options.options = options.files.streamTasks[task]['options']
 
 				_.forEach val, (file) ->
 					ext = path.extname(file)
-					result_ext = (if options.tasks[task]?.to? then options.tasks[task].to else '')
+					result_ext = (if options.files.streamTasks[task]?.to? then options.files.streamTasks[task].to else '')
 					if result_ext != ''
 						result_path = path.join(options.files.dest , file).replace(ext, result_ext)
 					else
@@ -114,8 +117,22 @@ module.exports = (grunt) ->
 				task_options['files'] = src
 				run_task task, task_options
 
-		if _.isObject options.html
+		tasks_to_run.push "smart_assets_files"
 
+		if _.isObject options.files.afterTasks
+			grunt.registerTask "smart_assets_filesAfter", ->
+
+				defaults =
+					expand: true
+					cwd : options.files.dest
+					dest: options.files.dest
+
+				_.forEach options.files.afterTasks, (options, task)->
+					run_task task, _.merge(defaults, options)
+
+			tasks_to_run.push "smart_assets_filesAfter"
+
+		if _.isObject options.html
 			if !options.html.cwd? or !options.html.dest?
 				grunt.fail.fatal "Your not configure html.cwd or html.dest!"
 
@@ -139,7 +156,7 @@ module.exports = (grunt) ->
 								file = RegExp.$1
 								file_ext = path.extname(file) #берем расширение файла
 								#ищем результирующее
-								result_ext = if options.tasks[file_ext.split('.').pop()]?.to? then options.tasks[file_ext.split('.').pop()].to else ''
+								result_ext = if options.files.streamTasks[file_ext.split('.').pop()]?.to? then options.files.streamTasks[file_ext.split('.').pop()].to else ''
 								if result_ext != ''
 									result_file =file.replace file_ext, result_ext
 								else
@@ -154,22 +171,24 @@ module.exports = (grunt) ->
 									if options.html?.rev? and !pattern[2]? then result_file = [result_file, md5(result_file_path)].join('?')
 									content = content.replace file, result_file
 									msg_ok.push('Replace ' + file + ' to ' + result_file)
-
 								else
 									msg_warn.push('Not replaced in html (ignore it if all ok) - "' + file + '"')
-					if msg_ok.lenght
+
+					if msg_ok.length
 						grunt.log.subhead('Changed path in html:')
 						msg_ok.forEach (msg) ->
 							grunt.log.ok(msg)
 
-					if msg_warn.lenght
+					if msg_warn.length
 						grunt.log.subhead('Error? No! Just warning...:')
 						msg_warn.forEach (msg) ->
 							grunt.log.warn(msg)
 
 					grunt.file.write path.join(options.html.dest, file_name), content
 
-		grunt.task.run(['smart_assets_files', 'smart_assets_html']);
+			tasks_to_run.push "smart_assets_html"
+
+		grunt.task.run(tasks_to_run);
 
 
 

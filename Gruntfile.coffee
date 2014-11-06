@@ -39,22 +39,32 @@ module.exports = (grunt) ->
 						cwd: 'test/test-app/app'
 						dest: 'test/test-app/dist'
 						cleanDest: true
+
+						streamTasks:
+							coffee:
+								from: ['.coffee']
+								to: '.js'
+								options:
+									sourceMap: true,
+									bare: true
+							sass:
+								from: ['.sass', '.scss']
+								to: '.css'
+
+						afterTasks:
+							autoprefixer:
+								src: ['**/*.css', '!**/library/**']
+								options:
+									map: true
+
+
 					html:
 						cwd: 'test/test-app/html'
 						dest: 'test/test-app/html-dest'
 						src: '*.html'
 						assetDir: 'test/test-app'
 						rev: true
-					tasks:
-						coffee:
-							from: ['.coffee']
-							to: '.js'
-							options:
-								sourceMap: true,
-								bare: true
-						sass:
-							from: ['.sass', '.scss']
-							to: '.css'
+
 
 
 
