@@ -17,11 +17,11 @@ module.exports = (grunt) ->
 		default_config = grunt.config.get('task') || {};
 		default_config['smart_assets'] = config
 		grunt.config.set(task, default_config);
-		grunt.task.run(task + ':smart_assets');
+		grunt.task.run("#{task}:smart_assets");
 
 	md5 = (filepath) ->
 		hash = crypto.createHash('md5');
-		grunt.log.verbose.write('Hashing ' + filepath + '...');
+		grunt.log.verbose.write("Hashing #{filepath} ...");
 		hash.update(grunt.file.read(filepath), 'utf8');
 		return hash.digest('hex').slice(0, 8);
 
@@ -170,9 +170,9 @@ module.exports = (grunt) ->
 									if pattern[2]? then result_file = pattern[2](result_file)
 									if options.html?.rev? and !pattern[2]? then result_file = [result_file, md5(result_file_path)].join('?')
 									content = content.replace file, result_file
-									msg_ok.push('Replace ' + file + ' to ' + result_file)
+									msg_ok.push("Replace #{file} to #{result_file}")
 								else
-									msg_warn.push('Not replaced in html (ignore it if all ok) - "' + file + '"')
+									msg_warn.push("Not replaced in html (ignore it if all ok) - #{file}")
 
 					if msg_ok.length
 						grunt.log.subhead('Changed path in html:')
@@ -189,32 +189,3 @@ module.exports = (grunt) ->
 			tasks_to_run.push "smart_assets_html"
 
 		grunt.task.run(tasks_to_run);
-
-
-
-		# Iterate over all specified file groups.
-#		@files.forEach (file) ->
-			# Concat specified files.
-#			console.lg(file);
-			# Warn on and remove invalid source files (if nonull was set).
-
-			# Read file source.
-#			src = file.src.filter((filepath) ->
-#				unless grunt.file.exists(filepath)
-#					grunt.log.warn "Source file \"" + filepath + "\" not found."
-#					false
-#				else
-#					true
-#			).map((filepath) ->
-#				grunt.file.read filepath
-#			).join(grunt.util.normalizelf(options.separator))
-#
-#			# Handle options.
-#			src += options.punctuation
-#
-#			# Write the destination file.
-#			grunt.file.write file.dest, src
-#
-#			# Print a success message.
-#			grunt.log.writeln "File \"" + file.dest + "\" created."
-#			return
