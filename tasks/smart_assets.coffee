@@ -166,7 +166,7 @@ module.exports = (grunt) ->
 								result_file_path = path.join(options.html.assetDir, result_file).replace(options.files.cwd, options.files.dest)
 								result_file = path.join(options.html.assetDir, result_file).replace(options.files.cwd, options.files.dest).replace(options.html.assetDir, '')
 
-								if grunt.file.exists(result_file_path)
+								if grunt.file.exists(result_file_path) && grunt.file.isFile(result_file_path)
 									if pattern[2]? then result_file = pattern[2](result_file)
 									if options.html?.rev? and !pattern[2]? then result_file = [result_file, md5(result_file_path)].join('?')
 									content = content.replace file, result_file
