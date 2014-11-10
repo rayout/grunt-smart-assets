@@ -34,7 +34,7 @@ module.exports = (grunt) ->
 		[/<image[^\>]*[^\>\S]+src=['"]([^"']+)["']/gim]
 		[/<(?:img|source)[^\>]*[^\>\S]+srcset=['"]([^"'\s]+)(?:\s\d[mx])["']/gim]
 		[/<source[^\>]+src=['"]([^"']+)["']/gim]
-		[/<a[^\>]+href=['"]([^"']+)["']/gim]
+		#[/<a[^\>]+href=['"]([^"']+)["']/gim]
 		[/<input[^\>]+src=['"]([^"']+)["']/gim]
 		[/data-(?!main).[^=]+=['"]([^'"]+)['"]/gim]
 		[
@@ -175,7 +175,7 @@ module.exports = (grunt) ->
 									msg_warn.push("Not replaced in html (ignore it if all ok) - #{file}")
 
 					if msg_ok.length
-						grunt.log.subhead('Changed path in html:')
+						grunt.log.subhead("Changed path in html #{path.join(options.html.cwd, file_name)}:")
 						msg_ok.forEach (msg) ->
 							grunt.log.ok(msg)
 
