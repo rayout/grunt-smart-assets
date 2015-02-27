@@ -168,7 +168,7 @@ module.exports = (grunt) ->
 
 								if grunt.file.exists(result_file_path) && grunt.file.isFile(result_file_path)
 									if pattern[2]? then result_file = pattern[2](result_file)
-									if options.html?.rev? and !pattern[2]? then result_file = [result_file, md5(result_file_path)].join('?')
+									if options.html?.rev? and options.html.rev and !pattern[2]? then result_file = [result_file, md5(result_file_path)].join('?')
 									content = content.replace file, result_file
 									msg_ok.push("Replace #{file} to #{result_file}")
 								else

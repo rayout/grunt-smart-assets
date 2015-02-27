@@ -1,6 +1,6 @@
 {
   "name": "grunt-smart-assets",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Convert all files in all directories. Then, change path in html files to new converted files",
   "repository": "https://github.com/Freezko/grunt-smart-assets",
   "author": {
